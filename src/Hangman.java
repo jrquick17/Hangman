@@ -8,32 +8,28 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Hangman 
-{	
-	static File file = new File("C:/Users/JRQuick/Desktop/Java Programs/Hangman/src/words.txt");
+public class Hangman {
+	static File file = new File("C:\\Users\\j.quick\\hangman\\resources\\words.txt");
 	static FileInputStream fis = null;
 	static BufferedInputStream bis = null;
 	static DataInputStream dis = null;
 	static Scanner scan = new Scanner(System.in);
 	static LinkedList<String> wordList;
-	static String ans, guessed[] = new String[26], letter, currentWord[], 
+	static String answered, guessed[] = new String[26], letter, currentWord[],
 	posLetters[] = "a b c d e f g h i j k l m n o p q r s t u v w x y z".split(" ");
 	static boolean isComplete = false, multLetter, struckOut = false;
 	static int placement, strikes;
 	static double perLetters[] = new double[26];
 
-	public static void setWordList()
-	{
+	public static void setWordList() {
 		LinkedList<String> words = new LinkedList<String>();
 
-		try 
-		{
+		try {
 			fis = new FileInputStream(file);
 			bis = new BufferedInputStream(fis);
 			dis = new DataInputStream(bis);
 
-			while (dis.available() != 0) 
-			{
+			while (dis.available() != 0) {
 				words.add(dis.readLine());
 			}
 
@@ -50,10 +46,10 @@ public class Hangman
 		wordList = words;
 	}
 
-	public static String findNextGuess(boolean show)
-	{
-		if (show)
-			System.out.println("Letter\tChance");
+	public static String findNextGuess(boolean show) {
+		if (show) {
+            System.out.println("Letter\tChance");
+        }
 		for (int let = 0, num = 0; let < 26; let++, num = 0)
 		{
 			for (int i = 0; i < wordList.size(); i++)
@@ -185,14 +181,14 @@ public class Hangman
 			findNextGuess(true);
 
 			System.out.println("Did your guess work? ");
-			ans = scan.next();
-			if (ans.equalsIgnoreCase("No"))
+			answered = scan.next();
+			if (answered.equalsIgnoreCase("No"))
 			{
 				System.out.println("What letter did you guess? ");
 				letter = scan.next();
 				wordList = removeByWrongLetter(wordList, letter);
 			}
-			else if (ans.equalsIgnoreCase("Yes"))
+			else if (answered.equalsIgnoreCase("Yes"))
 			{
 				System.out.println("Enter the known letter: ");
 				letter = scan.next();
@@ -202,7 +198,7 @@ public class Hangman
 
 				wordList = removeByCorrectLetter(wordList, letter, placement);
 			}
-			else if (ans.equalsIgnoreCase("Show"))
+			else if (answered.equalsIgnoreCase("Show"))
 			{
 				for (int i = 0; i < wordList.size(); i++)
 				{
@@ -264,9 +260,9 @@ public class Hangman
 			letter = findNextGuess(false);
 
 			System.out.println("Was I correct? ");
-			ans = scan.next();
+			answered = scan.next();
 
-			if (ans.equalsIgnoreCase("Yes"))
+			if (answered.equalsIgnoreCase("Yes"))
 			{
 				multLetter = true;
 				while (multLetter)
@@ -279,8 +275,8 @@ public class Hangman
 					if (!checkIfComplete())
 					{
 						System.out.println("Is there multiple places for that letter? ");
-						ans = scan.next();
-						if (ans.equalsIgnoreCase("no"))
+						answered = scan.next();
+						if (answered.equalsIgnoreCase("no"))
 							multLetter = false;
 					}
 					else
@@ -289,7 +285,7 @@ public class Hangman
 					}
 				}
 			}
-			else if (ans.equalsIgnoreCase("no"))
+			else if (answered.equalsIgnoreCase("no"))
 			{
 				wordList = removeByWrongLetter(wordList, letter);
 				struckOut = addToStrikes();

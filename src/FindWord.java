@@ -17,7 +17,7 @@ public class FindWord
 
 		try 
 		{
-			FileInputStream fis = new FileInputStream(new File("C:/Users/jrquick/Desktop/Programs/Hangman/words.txt"));
+			FileInputStream fis = new FileInputStream(new File("C:\\Users\\j.quick\\hangman\\resources\\words.txt"));
 			BufferedInputStream bis = new BufferedInputStream(fis);
 			DataInputStream dis = new DataInputStream(bis);
 			int cnt = 0;
