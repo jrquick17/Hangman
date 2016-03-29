@@ -354,8 +354,7 @@ public class Hangman {
 		System.out.println(i);
 		int count = 0;
 
-		try 
-		{
+		try {
 			fis = new FileInputStream(file);
 			bis = new BufferedInputStream(fis);
 			dis = new DataInputStream(bis);
@@ -372,8 +371,6 @@ public class Hangman {
 			bis.close();
 			dis.close();
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -384,14 +381,11 @@ public class Hangman {
     public static void main(String[]args) {
         Hangman hangman = new Hangman();
         Scanner scan = new Scanner(System.in);
-        String option;
 
         System.out.println("What would you like to do? ");
         System.out.println("Type 'help' for help solving.");
         System.out.println("Type 'play' to try and guess a word.");
         System.out.println("Type 'create' for me to guess your word.");
-
-        option = scan.next();
 
         switch (scan.next()) {
             case "help":
