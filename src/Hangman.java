@@ -9,7 +9,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Hangman {
-	static File file = new File("C:\\xampp\\htdocs\\Encounting Software\\jrq\\hangman\\resources\\words.txt");
+	static File file = new File("C:\\Users\\j.quick\\hangman\\resources\\words.txt");
 	static FileInputStream fis = null;
 	static BufferedInputStream bis = null;
 	static DataInputStream dis = null;
@@ -20,13 +20,14 @@ public class Hangman {
 	static int placement, strikes;
 	static double perLetters[] = new double[26];
 
+    Random gen = new Random();
     Scanner scan = new Scanner(System.in);
 
     public Hangman() {
         Opponent opponent = new Opponent();
     }
 
-	public static String findNextGuess(boolean show) {
+	public String findNextGuess(boolean show) {
 		if (show) {
             System.out.println("Letter\tChance");
         }
@@ -67,7 +68,7 @@ public class Hangman {
 			return null;
 	}
 
-	public static LinkedList<String> removeByLength(LinkedList<String> wordList, int length)
+	public LinkedList<String> removeByLength(LinkedList<String> wordList, int length)
 	{
 		for (int i = 0; i < wordList.size(); i++)
 		{
@@ -81,7 +82,7 @@ public class Hangman {
 		return wordList;
 	}
 
-	public static LinkedList<String> removeByCorrectLetter(LinkedList<String> wordList, String letter, int placement)
+	public LinkedList<String> removeByCorrectLetter(LinkedList<String> wordList, String letter, int placement)
 	{
 		for (int i = 0; i < wordList.size(); i++)
 		{
@@ -95,19 +96,17 @@ public class Hangman {
 		return wordList;
 	}
 
-	public static void showCurrentWord()
-	{
-		for (int i = 0; i < currentWord.length; i++)
-		{
-			if (currentWord[i] != null)
-				System.out.print(currentWord[i]);
-			else 
-				System.out.print("-");
-		}
-		System.out.println();
+	public void printCurrentWord() {
+        for (String currentLetter : currentWord) {
+            if (currentLetter != null) {
+                System.out.println(currentLetter);
+            } else {
+                System.out.println("-");
+            }
+        }
 	}
 
-	public static LinkedList<String> removeByWrongLetter(LinkedList<String> wordList, String letter)
+	public LinkedList<String> removeByWrongLetter(LinkedList<String> wordList, String letter)
 	{
 		for (int i = 0; i < wordList.size(); i++)
 		{
@@ -121,16 +120,17 @@ public class Hangman {
 		return wordList;
 	}
 
-	public static boolean alreadyGuessed()
-	{
-		for (int i = 0; i < 26; i++)
-			if (letter.equalsIgnoreCase(guessed[i]))
-				return true;
+	public boolean alreadyGuessed() {
+		for (int i = 0; i < 26; i++) {
+            if (letter.equalsIgnoreCase(guessed[i])) {
+                return true;
+            }
+        }
 
 		return false;
 	}
 
-	public static void addToGuessed(String letter)
+	public void addToGuessed(String letter)
 	{
 		for (int i = 0; i < posLetters.length; i++)
 		{
@@ -139,8 +139,7 @@ public class Hangman {
 		}
 	}
 
-	public static void help(LinkedList<String> wordList)
-	{
+	public void help() {
 		System.out.println("How long is the word? ");
 		currentWord = new String[scan.nextInt()];
 		wordList = removeByLength(wordList, currentWord.length);
@@ -154,9 +153,8 @@ public class Hangman {
 
 		wordList = removeByCorrectLetter(wordList, letter, placement);
 
-		while (!isComplete)
-		{	
-			showCurrentWord();
+		while (!isComplete) {
+			printCurrentWord();
 
 			findNextGuess(true);
 
@@ -192,8 +190,7 @@ public class Hangman {
 		System.out.println("Thank me later.");
 	}
 
-	private static void create(LinkedList<String> wordList) 
-	{
+	private void create() {
 		System.out.println("How many letters are in your word? ");
 		currentWord = new String[scan.nextInt()];
 		wordList = removeByLength(wordList, currentWord.length);
@@ -211,7 +208,7 @@ public class Hangman {
 
 		while (!isComplete && !struckOut)
 		{
-			showCurrentWord();
+			printCurrentWord();
 
 			letter = findNextGuess(false);
 
@@ -258,44 +255,46 @@ public class Hangman {
 			System.out.println("I'm not sure how, but we both know you're a cheating bastard!");
 	}
 
-	public static boolean checkIfComplete() 
-	{
-		for (int i = 0; i < currentWord.length; i++)
-		{
-			if (currentWord[i] == null)
-				return false;
+	public boolean checkIfComplete() {
+		for (int i = 0; i < currentWord.length; i++) {
+			if (currentWord[i] == null) {
+                return false;
+            }
 		}
 
 		return true;
 	}
 
-	public static boolean addToStrikes()
-	{
+	public boolean addToStrikes() {
 		strikes++;
 
 		System.out.println("Strike " + strikes + " of 6!");
-
-		if (strikes == 1)
-			System.out.println("  ___\n /   |\n O   |\n     |\n     |\n     |\n ____|____");
-		else if (strikes == 2)
-			System.out.println("  ___\n /   |\n O   |\n |   |\n |   |\n     |\n ____|____");
-		else if (strikes == 3)
-			System.out.println("  ___\n /   |\n O   |\n |   |\n |   |\n  \\  |\n ____|____");
-		else if (strikes == 4)
-			System.out.println("  ___\n /   |\n O   |\n |   |\n |   |\n/ \\  |\n ____|____");
-		else if (strikes == 5)
-			System.out.println("  ___\n /   |\n O   |\n\\|   |\n |   |\n/ \\  |\n ____|____");
-		else if (strikes == 6)
-			System.out.println("  ___\n /   |\n O   |\n\\|/  |\n |   |\n/ \\  |\n ____|____");
+		switch (strikes) {
+            case 1:
+                System.out.println("  ___\n /   |\n O   |\n     |\n     |\n     |\n ____|____");
+                break;
+            case 2:
+                System.out.println("  ___\n /   |\n O   |\n |   |\n |   |\n     |\n ____|____");
+                break;
+            case 3:
+                System.out.println("  ___\n /   |\n O   |\n |   |\n |   |\n  \\  |\n ____|____");
+                break;
+            case 4:
+                System.out.println("  ___\n /   |\n O   |\n |   |\n |   |\n/ \\  |\n ____|____");
+                break;
+            case 5:
+                System.out.println("  ___\n /   |\n O   |\n\\|   |\n |   |\n/ \\  |\n ____|____");
+                break;
+            case 6:
+            default:
+                System.out.println("  ___\n /   |\n O   |\n\\|/  |\n |   |\n/ \\  |\n ____|____");
+                break;
+        }
 		
-		if (strikes == 6)
-			return true;
-		else
-			return false;
+		return strikes == 6;
 	}
 
-	public static void play() {
-		Random gen = new Random();
+	public void play() {
 		String answer[];
 
 		String word = getWord(gen.nextInt(wordList.size()));
@@ -305,43 +304,34 @@ public class Hangman {
 		for (int i = 0; i < word.length(); i++)
 			answer[i] = word.substring(i, i+1);
 
-
 		System.out.println("Bet you can't guess my word, it's " + currentWord.length + " characters " +
 		"long.\nI'll even give you a letter.");
 		int given = gen.nextInt(currentWord.length);
 		currentWord[given] = answer[given];
 
-		while (!isComplete && !struckOut)
-		{
-			showCurrentWord();
+		while (!isComplete && !struckOut) {
+			this.printCurrentWord();
 			System.out.println("What letter would you like to guess? ");
 			letter = scan.next();
 
-			if (!alreadyGuessed())
-			{
-				for (int i = 0, cnt = 0; i < answer.length; i++)
-				{
-					if (answer[i].equalsIgnoreCase(letter))
-					{
+			if (!this.alreadyGuessed()) {
+				for (int i = 0, count = 0; i < answer.length; i++) {
+					if (answer[i].equalsIgnoreCase(letter)) {
 						currentWord[i] = answer[i];
 						System.out.println("Lucky guess!");
-					}
-					else 
-					{
-						cnt++; 
-						if (cnt == answer.length)
+					} else {
+						count++;
+						if (count == answer.length)
 							struckOut = addToStrikes();
 					}
 				}
-			}
-			else 
-			{
-				System.out.println("You already guessed that, but it is cute " +
-				"you think that is in the word still.");
-			}
 
-			addToGuessed(letter);
-			isComplete = checkIfComplete();
+                addToGuessed(letter);
+                isComplete = checkIfComplete();
+			}
+			else {
+				System.out.println("Cute, but you already guessed that.");
+			}
 		}
 
 		if (isComplete)
@@ -351,8 +341,7 @@ public class Hangman {
 					"\nThe word was " + showAnswer(answer));
 	}
 
-	public static String showAnswer(String[] answer) 
-	{
+	public String showAnswer(String[] answer) {
 		String str = "";
 		
 		for (int i = 0; i < answer.length; i++)
@@ -361,8 +350,7 @@ public class Hangman {
 		return str;
 	}
 
-	public static String getWord(int i)
-	{
+	public String getWord(int i) {
 		System.out.println(i);
 		int count = 0;
 
@@ -372,10 +360,8 @@ public class Hangman {
 			bis = new BufferedInputStream(fis);
 			dis = new DataInputStream(bis);
 
-			while (dis.available() != 0)
-			{
-				if (i == count)
-				{
+			while (dis.available() != 0) {
+				if (i == count) {
 					return (dis.readLine());
 				}
 				dis.readLine();
@@ -396,6 +382,7 @@ public class Hangman {
 	}
 
     public static void main(String[]args) {
+        Hangman hangman = new Hangman();
         Scanner scan = new Scanner(System.in);
         String option;
 
@@ -408,14 +395,13 @@ public class Hangman {
 
         switch (scan.next()) {
             case "help":
-                help(wordList);
+                hangman.help();
                 break;
             case "play":
-                Hangman hangman = new Hangman();
-                play(wordList);
+                hangman.play();
                 break;
             case "create":
-                create(wordList);
+                hangman.create();
                 break;
             default:
                 System.out.println("You messed up dumbass!");

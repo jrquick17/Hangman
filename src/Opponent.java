@@ -18,8 +18,8 @@ public class Opponent {
         double strength[] = new double[words.length];
 
         for (String word : wordService) {
-            for (int i = 1; i <= word.length(); i++) {
-                String letter = word.substring(0, i);
+            for (int i = 0; i < word.length(); i++) {
+                String letter = word.substring(i, i+1);
             }
         }
 
