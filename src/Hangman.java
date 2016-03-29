@@ -9,11 +9,10 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Hangman {
-	static File file = new File("C:\\Users\\j.quick\\hangman\\resources\\words.txt");
+	static File file = new File("C:\\xampp\\htdocs\\Encounting Software\\jrq\\hangman\\resources\\words.txt");
 	static FileInputStream fis = null;
 	static BufferedInputStream bis = null;
 	static DataInputStream dis = null;
-	static Scanner scan = new Scanner(System.in);
 	static LinkedList<String> wordList;
 	static String answered, guessed[] = new String[26], letter, currentWord[],
 	posLetters[] = "a b c d e f g h i j k l m n o p q r s t u v w x y z".split(" ");
@@ -21,30 +20,11 @@ public class Hangman {
 	static int placement, strikes;
 	static double perLetters[] = new double[26];
 
-	public static void setWordList() {
-		LinkedList<String> words = new LinkedList<String>();
+    Scanner scan = new Scanner(System.in);
 
-		try {
-			fis = new FileInputStream(file);
-			bis = new BufferedInputStream(fis);
-			dis = new DataInputStream(bis);
-
-			while (dis.available() != 0) {
-				words.add(dis.readLine());
-			}
-
-			fis.close();
-			bis.close();
-			dis.close();
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		wordList = words;
-	}
+    public Hangman() {
+        Opponent opponent = new Opponent();
+    }
 
 	public static String findNextGuess(boolean show) {
 		if (show) {
@@ -212,30 +192,6 @@ public class Hangman {
 		System.out.println("Thank me later.");
 	}
 
-	public static void main(String[]args)
-	{
-		Scanner scan = new Scanner(System.in);
-		String option;
-
-		setWordList();
-
-		System.out.println("What would you like to do? ");
-		System.out.println("Type 'help' for help solving.");
-		System.out.println("Type 'play' to try and guess a word.");
-		System.out.println("Type 'create' for me to guess your word.");
-
-		option = scan.next();
-
-		if (option.equalsIgnoreCase("help"))
-			help(wordList);
-		else if (option.equals("play"))
-			play(wordList);
-		else if (option.equals("create"))
-			create(wordList);
-		else
-			System.out.println("You messed up dumbass!");
-	}
-
 	private static void create(LinkedList<String> wordList) 
 	{
 		System.out.println("How many letters are in your word? ");
@@ -338,8 +294,7 @@ public class Hangman {
 			return false;
 	}
 
-	public static void play(LinkedList<String> wordList)
-	{
+	public static void play() {
 		Random gen = new Random();
 		String answer[];
 
@@ -439,4 +394,31 @@ public class Hangman {
 
 		return null;
 	}
+
+    public static void main(String[]args) {
+        Scanner scan = new Scanner(System.in);
+        String option;
+
+        System.out.println("What would you like to do? ");
+        System.out.println("Type 'help' for help solving.");
+        System.out.println("Type 'play' to try and guess a word.");
+        System.out.println("Type 'create' for me to guess your word.");
+
+        option = scan.next();
+
+        switch (scan.next()) {
+            case "help":
+                help(wordList);
+                break;
+            case "play":
+                Hangman hangman = new Hangman();
+                play(wordList);
+                break;
+            case "create":
+                create(wordList);
+                break;
+            default:
+                System.out.println("You messed up dumbass!");
+        }
+    }
 }
