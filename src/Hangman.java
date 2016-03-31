@@ -1,275 +1,241 @@
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.jar.Pack200;
 
 public class Hangman {
-	static File file = new File("C:\\Users\\j.quick\\hangman\\resources\\words.txt");
-	static FileInputStream fis = null;
-	static BufferedInputStream bis = null;
-	static DataInputStream dis = null;
-	static LinkedList<String> wordList;
-	static String answered, guessed[] = new String[26], letter, currentWord[],
-	posLetters[] = "a b c d e f g h i j k l m n o p q r s t u v w x y z".split(" ");
-	static boolean isComplete = false, multLetter, struckOut = false;
-	static int placement, strikes;
-	static double perLetters[] = new double[26];
+    String answered, guessed[] = new String[26], letter,
+    posLetters[] = "a b c d e f g h i j k l m n o p q r s t u v w x y z".split(" ");
+    boolean isComplete = false, multLetter, struckOut = false;
+    int placement, strikes;
+    double perLetters[] = new double[26];
 
     Random gen = new Random();
     Scanner scan = new Scanner(System.in);
 
+    String[] answer, currentWordArray;
+    Opponent opponent;
+
     public Hangman() {
-        Opponent opponent = new Opponent();
+        opponent = new Opponent();
     }
 
-	public String findNextGuess(boolean show) {
-		if (show) {
+    public String findNextGuess(boolean show) {
+        if (show) {
             System.out.println("Letter\tChance");
         }
-		for (int let = 0, num = 0; let < 26; let++, num = 0)
-		{
-			for (int i = 0; i < wordList.size(); i++)
-			{
-				if (wordList.get(i).contains(posLetters[let]))
-					num++;
-			}
+        for (int let = 0, num = 0; let < 26; let++, num = 0)
+        {
+            for (int i = 0; i < opponent.getWords().size(); i++)
+            {
+                if (opponent.getWords().get(i).contains(posLetters[let]))
+                    num++;
+            }
 
-			perLetters[let] = ((double)num/wordList.size()*100);
+            perLetters[let] = ((double)num/opponent.getWords().size()*100);
 
-			if (show)
-				System.out.println(posLetters[let] + ":\t" + perLetters[let]);
-		}
+            if (show)
+                System.out.println(posLetters[let] + ":\t" + perLetters[let]);
+        }
 
-		if (!show)
-		{
-			double maxAmt = -1;
-			int maxInc = 0; 
+        if (!show)
+        {
+            double maxAmt = -1;
+            int maxInc = 0; 
 
-			for (int i = 0; i < 26; i++)
-			{
-				if (maxAmt < perLetters[i] && guessed[i] == null)
-				{
-					maxAmt = perLetters[i];
-					maxInc = i;
-				}
-			}
+            for (int i = 0; i < 26; i++)
+            {
+                if (maxAmt < perLetters[i] && guessed[i] == null)
+                {
+                    maxAmt = perLetters[i];
+                    maxInc = i;
+                }
+            }
 
-			guessed[maxInc] = posLetters[maxInc];
-			System.out.println("I guess the letter " + posLetters[maxInc]);
+            guessed[maxInc] = posLetters[maxInc];
+            System.out.println("I guess the letter " + posLetters[maxInc]);
 
-			return posLetters[maxInc];
-		}
-		else
-			return null;
-	}
+            return posLetters[maxInc];
+        }
+        else
+            return null;
+    }
 
-	public LinkedList<String> removeByLength(LinkedList<String> wordList, int length)
-	{
-		for (int i = 0; i < wordList.size(); i++)
-		{
-			if (wordList.get(i).length() > length || wordList.get(i).length() < length)
-			{
-				wordList.remove(i);
-				i--;
-			}
-		}
-
-		return wordList;
-	}
-
-	public LinkedList<String> removeByCorrectLetter(LinkedList<String> wordList, String letter, int placement)
-	{
-		for (int i = 0; i < wordList.size(); i++)
-		{
-			if (!wordList.get(i).substring(placement, placement+1).contains(letter))
-			{
-				wordList.remove(i);
-				i--;
-			}
-		}
-
-		return wordList;
-	}
-
-	public void printCurrentWord() {
-        for (String currentLetter : currentWord) {
-            if (currentLetter != null) {
-                System.out.println(currentLetter);
-            } else {
-                System.out.println("-");
+    public ArrayList<String> removeByLength(int length)
+    {
+        for (int i = 0; i < opponent.getWords().size(); i++)
+        {
+            if (opponent.getWords().get(i).length() > length || opponent.getWords().get(i).length() < length)
+            {
+                opponent.getWords().remove(i);
+                i--;
             }
         }
-	}
 
-	public LinkedList<String> removeByWrongLetter(LinkedList<String> wordList, String letter)
-	{
-		for (int i = 0; i < wordList.size(); i++)
-		{
-			if (wordList.get(i).contains(letter))
-			{
-				wordList.remove(i);
-				i--;
-			}
-		}
+        return opponent.getWords();
+    }
 
-		return wordList;
-	}
+    public ArrayList<String> removeByCorrectLetter(String letter, int placement) {
+        for (int i = 0; i < opponent.getWords().size(); i++) {
+            if (!opponent.getWords().get(i).substring(placement, placement+1).contains(letter)) {
+                opponent.getWords().remove(i);
+                i--;
+            }
+        }
 
-	public boolean alreadyGuessed() {
-		for (int i = 0; i < 26; i++) {
+        return opponent.getWords();
+    }
+
+    public ArrayList<String> removeByWrongLetter(String letter) {
+        for (int i = 0; i < opponent.getWords().size(); i++) {
+            if (opponent.getWords().get(i).contains(letter)) {
+                opponent.getWords().remove(i);
+                i--;
+            }
+        }
+
+        return opponent.getWords();
+    }
+
+    public boolean alreadyGuessed(String letter) {
+        for (int i = 0; i < 26; i++) {
             if (letter.equalsIgnoreCase(guessed[i])) {
                 return true;
             }
         }
 
-		return false;
-	}
+        return false;
+    }
 
-	public void addToGuessed(String letter)
-	{
-		for (int i = 0; i < posLetters.length; i++)
-		{
-			if (letter.equalsIgnoreCase(posLetters[i]))
-				guessed[i] = letter;
-		}
-	}
+    public void addToGuessed(String letter)
+    {
+        for (int i = 0; i < posLetters.length; i++)
+        {
+            if (letter.equalsIgnoreCase(posLetters[i]))
+                guessed[i] = letter;
+        }
+    }
 
-	public void help() {
-		System.out.println("How long is the word? ");
-		currentWord = new String[scan.nextInt()];
-		wordList = removeByLength(wordList, currentWord.length);
+    public void help() {
+        System.out.println("How long is the word? ");
+        currentWordArray = new String[scan.nextInt()];
 
-		System.out.println("Enter the known letter: ");
-		letter = scan.next();
-		System.out.println("Enter the placement: ");
-		placement = scan.nextInt();
-		currentWord[placement] = letter;
-		addToGuessed(letter);
+        opponent.setWords(removeByLength(currentWordArray.length));
 
-		wordList = removeByCorrectLetter(wordList, letter, placement);
+        System.out.println("Enter the known letter: ");
+        letter = scan.next();
+        System.out.println("Enter the placement: ");
+        placement = scan.nextInt();
+        currentWordArray[placement] = letter;
+        addToGuessed(letter);
 
-		while (!isComplete) {
-			printCurrentWord();
+        opponent.setWords(removeByCorrectLetter(letter, placement));
 
-			findNextGuess(true);
+        while (!isComplete) {
+            System.out.println(WordService.toString(currentWordArray));
 
-			System.out.println("Did your guess work? ");
-			answered = scan.next();
-			if (answered.equalsIgnoreCase("No"))
-			{
-				System.out.println("What letter did you guess? ");
-				letter = scan.next();
-				wordList = removeByWrongLetter(wordList, letter);
-			}
-			else if (answered.equalsIgnoreCase("Yes"))
-			{
-				System.out.println("Enter the known letter: ");
-				letter = scan.next();
-				System.out.println("Enter the placement: ");
-				placement = scan.nextInt();
-				currentWord[placement] = letter;
+            findNextGuess(true);
 
-				wordList = removeByCorrectLetter(wordList, letter, placement);
-			}
-			else if (answered.equalsIgnoreCase("Show"))
-			{
-				for (int i = 0; i < wordList.size(); i++)
-				{
-					System.out.println(wordList.get(i));
-				}
-			}
+            System.out.println("Did your guess work? ");
+            answered = scan.next();
+            if (answered.equalsIgnoreCase("No"))
+            {
+                System.out.println("What letter did you guess? ");
+                letter = scan.next();
+                opponent.setWords(removeByWrongLetter(letter));
+            }
+            else if (answered.equalsIgnoreCase("Yes"))
+            {
+                System.out.println("Enter the known letter: ");
+                letter = scan.next();
+                System.out.println("Enter the placement: ");
+                placement = scan.nextInt();
+                currentWordArray[placement] = letter;
 
-			isComplete = checkIfComplete();
-		}
+                opponent.setWords(removeByCorrectLetter(letter, placement));
+            } else if (answered.equalsIgnoreCase("Show")) {
+                for (int i = 0; i < opponent.getWords().size(); i++) {
+                    System.out.println(opponent.getWords().get(i));
+                }
+            }
 
-		System.out.println("Thank me later.");
-	}
+            isComplete = checkIfComplete();
+        }
 
-	private void create() {
-		System.out.println("How many letters are in your word? ");
-		currentWord = new String[scan.nextInt()];
-		wordList = removeByLength(wordList, currentWord.length);
+        System.out.println("Thank me later.");
+    }
 
-		System.out.println("And what letter are you giving me? ");
-		letter = scan.next();
-		if (!letter.equalsIgnoreCase("None"))
-		{
-			System.out.println("Where is the letter located? ");
-			placement = scan.nextInt();
-			wordList = removeByCorrectLetter(wordList, letter, placement);
-			addToGuessed(letter);
-			currentWord[placement] = letter;
-		}
+    private void create() {
+        System.out.println("How many letters are in your word? ");
+        currentWordArray = new String[scan.nextInt()];
+        opponent.setWords(removeByLength(currentWordArray.length));
 
-		while (!isComplete && !struckOut)
-		{
-			printCurrentWord();
+        System.out.println("And what letter are you giving me? ");
+        letter = scan.next();
+        if (!letter.equalsIgnoreCase("None")) {
+            System.out.println("Where is the letter located? ");
+            placement = scan.nextInt();
+            opponent.setWords(removeByCorrectLetter(letter, placement));
+            addToGuessed(letter);
+            currentWordArray[placement] = letter;
+        }
 
-			letter = findNextGuess(false);
+        while (!isComplete && !struckOut) {
+            System.out.println(WordService.toString(currentWordArray));
 
-			System.out.println("Was I correct? ");
-			answered = scan.next();
+            letter = findNextGuess(false);
 
-			if (answered.equalsIgnoreCase("Yes"))
-			{
-				multLetter = true;
-				while (multLetter)
-				{
-					System.out.println("Where is the letter located? ");
-					placement = scan.nextInt();
-					wordList = removeByCorrectLetter(wordList, letter, placement);
-					currentWord[placement] = letter;
+            System.out.println("Was I correct? ");
+            answered = scan.next();
 
-					if (!checkIfComplete())
-					{
-						System.out.println("Is there multiple places for that letter? ");
-						answered = scan.next();
-						if (answered.equalsIgnoreCase("no"))
-							multLetter = false;
-					}
-					else
-					{
-						multLetter = false;
-					}
-				}
-			}
-			else if (answered.equalsIgnoreCase("no"))
-			{
-				wordList = removeByWrongLetter(wordList, letter);
-				struckOut = addToStrikes();
-			}
-			else
-				System.out.println("Screwing up, eh?");
+            if (answered.equalsIgnoreCase("Yes")) {
+                multLetter = true;
+                while (multLetter) {
+                    System.out.println("Where is the letter located? ");
+                    placement = scan.nextInt();
+                    opponent.setWords(removeByCorrectLetter(letter, placement));
+                    currentWordArray[placement] = letter;
 
-			isComplete = checkIfComplete();
-		}
+                    if (!checkIfComplete()) {
+                        System.out.println("Is there multiple places for that letter? ");
+                        answered = scan.next();
+                        if (answered.equalsIgnoreCase("no"))
+                            multLetter = false;
+                    } else {
+                        multLetter = false;
+                    }
+                }
+            } else if (answered.equalsIgnoreCase("no")) {
+                opponent.setWords(removeByWrongLetter(letter));
+                struckOut = addStrike();
+            } else {
+                System.out.println("Screwing up, eh?");
+            }
 
-		if (isComplete)
-			System.out.println("Suck on that fool!");
-		else if (struckOut)
-			System.out.println("I'm not sure how, but we both know you're a cheating bastard!");
-	}
+            isComplete = checkIfComplete();
+        }
 
-	public boolean checkIfComplete() {
-		for (int i = 0; i < currentWord.length; i++) {
-			if (currentWord[i] == null) {
+        if (isComplete)
+            System.out.println("Suck on that fool!");
+        else if (struckOut)
+            System.out.println("I'm not sure how, but we both know you're a cheating bastard!");
+    }
+
+    public boolean checkIfComplete() {
+        for (int i = 0; i < currentWordArray.length; i++) {
+            if (currentWordArray[i] == null) {
                 return false;
             }
-		}
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	public boolean addToStrikes() {
-		strikes++;
+    public boolean addStrike() {
+        strikes++;
 
-		System.out.println("Strike " + strikes + " of 6!");
-		switch (strikes) {
+        System.out.println("Strike " + strikes + " of 6!");
+        switch (strikes) {
             case 1:
                 System.out.println("  ___\n /   |\n O   |\n     |\n     |\n     |\n ____|____");
                 break;
@@ -290,99 +256,95 @@ public class Hangman {
                 System.out.println("  ___\n /   |\n O   |\n\\|/  |\n |   |\n/ \\  |\n ____|____");
                 break;
         }
-		
-		return strikes == 6;
-	}
+        
+        return strikes == 6;
+    }
 
-	public void play() {
-		String answer[];
+    public boolean answerContains(String guess) {
+        for (String letter : answer) {
+            if (guess.equals(letter)) {
+                return true;
+            }
+        }
 
-		String word = getWord(gen.nextInt(wordList.size()));
-		currentWord = new String[word.length()];
-		answer = new String[word.length()];
+        return false;
+    }
 
-		for (int i = 0; i < word.length(); i++)
-			answer[i] = word.substring(i, i+1);
+    public void fillIn(String letter) {
+        for (int i = 0; i < answer.length; i++) {
+            if (answer[i].equals(letter)) {
+                currentWordArray[i] = answer[i];
+            }
+        }
+    }
 
-		System.out.println("Bet you can't guess my word, it's " + currentWord.length + " characters " +
-		"long.\nI'll even give you a letter.");
-		int given = gen.nextInt(currentWord.length);
-		currentWord[given] = answer[given];
+    public boolean guess(String letter) {
+        if (!this.alreadyGuessed(letter)) {
+            this.addToGuessed(letter);
 
-		while (!isComplete && !struckOut) {
-			this.printCurrentWord();
-			System.out.println("What letter would you like to guess? ");
-			letter = scan.next();
+            if (this.answerContains(letter)) {
+                this.fillIn(letter);
+                return true;
+            } else {
+                this.addStrike();
+            }
+        } else {
+            System.out.println("Cute, but you already guessed that.");
+        }
 
-			if (!this.alreadyGuessed()) {
-				for (int i = 0, count = 0; i < answer.length; i++) {
-					if (answer[i].equalsIgnoreCase(letter)) {
-						currentWord[i] = answer[i];
-						System.out.println("Lucky guess!");
-					} else {
-						count++;
-						if (count == answer.length)
-							struckOut = addToStrikes();
-					}
-				}
+        return false;
+    }
 
-                addToGuessed(letter);
-                isComplete = checkIfComplete();
-			}
-			else {
-				System.out.println("Cute, but you already guessed that.");
-			}
-		}
+    public boolean isStruckOut() {
+        return strikes == 6;
+    }
 
-		if (isComplete)
-			System.out.println("You must have cheated!");
-		else if (struckOut)
-			System.out.println("Didn't really expect much more from you honestly." +
-					"\nThe word was " + showAnswer(answer));
-	}
+    public boolean isComplete() {
+        for (String letter : currentWordArray) {
+            if (letter == null) {
+                return false;
+            }
+        }
 
-	public String showAnswer(String[] answer) {
-		String str = "";
-		
-		for (int i = 0; i < answer.length; i++)
-			str += answer[i];
-		
-		return str;
-	}
+        return true;
+    }
 
-	public String getWord(int i) {
-		System.out.println(i);
-		int count = 0;
+    public boolean keepPlaying() {
+        return !isStruckOut() && !this.isComplete();
+    }
 
-		try {
-			fis = new FileInputStream(file);
-			bis = new BufferedInputStream(fis);
-			dis = new DataInputStream(bis);
+    public void play() {
+        String currentWord = opponent.selectWord();
+        currentWordArray = new String[currentWord.length()];
+        answer = WordService.toArray(currentWord);
 
-			while (dis.available() != 0) {
-				if (i == count) {
-					return (dis.readLine());
-				}
-				dis.readLine();
-				count++;
-			}
+        System.out.println("Bet you can't guess my word, it's " + currentWordArray.length + " characters long.\nI'll even give you a letter.");
+        this.fillIn(opponent.getFreebie(currentWord));
 
-			fis.close();
-			bis.close();
-			dis.close();
+        while (this.keepPlaying()) {
+            System.out.println(WordService.toString(currentWordArray));
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+            System.out.println("What letter would you like to guess? ");
 
-		return null;
-	}
+            if (this.guess(scan.next())) {
+                System.out.println("Lucky guess!");
+            } else {
+                System.out.println("Nope!");
+            }
+        }
+
+        if (this.isComplete()) {
+            System.out.println("You must have cheated!");
+        } else if (this.isStruckOut()) {
+            System.out.println("Didn't really expect much more from you honestly.\nThe word was " + WordService.toString(answer));
+        }
+    }
 
     public static void main(String[]args) {
         Hangman hangman = new Hangman();
         Scanner scan = new Scanner(System.in);
 
-        System.out.println("What would you like to do? ");
+        System.out.println("What would you like to do?");
         System.out.println("Type 'help' for help solving.");
         System.out.println("Type 'play' to try and guess a word.");
         System.out.println("Type 'create' for me to guess your word.");

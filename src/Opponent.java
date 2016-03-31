@@ -13,6 +13,10 @@ public class Opponent {
         wordService = new WordService();
     }
 
+    public String getFreebie(String word) {
+        return wordService.getLetter(word);
+    }
+
     public String guessLetter(String board) {
         String letters, words[] = new String[58108];
         double strength[] = new double[words.length];
@@ -24,5 +28,17 @@ public class Opponent {
         }
 
         return "";
+    }
+
+    public ArrayList<String> getWords() {
+        return wordService.getWords();
+    }
+
+    public String selectWord() {
+        return wordService.getWord();
+    }
+
+    public void setWords(ArrayList<String> words) {
+        this.wordService.setWords(words);
     }
 }
