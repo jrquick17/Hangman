@@ -23,6 +23,10 @@ public class WordService implements Iterable<String> {
         return words.get(randomGenerator.nextInt(this.size()));
     }
 
+    public String getWord(int i) {
+        return words.get(i);
+    }
+
     public ArrayList<String> getWords() {
         return this.words;
     }
@@ -73,6 +77,28 @@ public class WordService implements Iterable<String> {
         }
 
         return returnVar;
+    }
+
+    public void trimByLength(int wordLength) {
+        for (int i = 0; i < this.getWords().size(); i++) {
+            if (this.getWords().get(i).length() > wordLength || this.getWords().get(i).length() < wordLength) {
+                this.getWords().remove(i);
+                i--;
+            }
+        }
+    }
+
+    public void trimByCurrentWord(String[] currentWord) {
+        for (int i = 0; i < this.getWords().size(); i++) {
+            String possibleWord = this.getWord(i);
+            for (int j = 0; j < currentWord.length; j++) {
+                if (!possibleWord.substring(j, j+1).equals(currentWord[j])) {
+                    this.getWords().remove(i);
+                    i--;
+                    break;
+                }
+            }
+        }
     }
 
     @Override
