@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.jar.Pack200;
 
 public class Hangman {
     String answered, guessed[] = new String[26], letter,
@@ -165,7 +164,7 @@ public class Hangman {
         System.out.println("Thank me later.");
     }
 
-    private void create() {
+    public void create() {
         System.out.println("How many letters are in your word? ");
         currentWordArray = new String[scan.nextInt()];
         opponent.setWords(removeByLength(currentWordArray.length));
@@ -337,30 +336,6 @@ public class Hangman {
             System.out.println("You must have cheated!");
         } else if (this.isStruckOut()) {
             System.out.println("Didn't really expect much more from you honestly.\nThe word was " + WordService.toString(answer));
-        }
-    }
-
-    public static void main(String[]args) {
-        Hangman hangman = new Hangman();
-        Scanner scan = new Scanner(System.in);
-
-        System.out.println("What would you like to do?");
-        System.out.println("Type 'help' for help solving.");
-        System.out.println("Type 'play' to try and guess a word.");
-        System.out.println("Type 'create' for me to guess your word.");
-
-        switch (scan.next()) {
-            case "help":
-                hangman.help();
-                break;
-            case "play":
-                hangman.play();
-                break;
-            case "create":
-                hangman.create();
-                break;
-            default:
-                System.out.println("You messed up dumbass!");
         }
     }
 }
