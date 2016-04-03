@@ -111,7 +111,7 @@ public class Hangman {
         }
     }
 
-    private void help() {
+    public void help() {
         System.out.println("What is your word?");
         answer = WordService.toArray(scan.next());
         currentWordArray = new String[answer.length];
@@ -295,7 +295,7 @@ public class Hangman {
         return !isStruckOut() && !this.isComplete();
     }
 
-    private void play() {
+    public void play() {
         String currentWord = opponent.selectWord();
         currentWordArray = new String[currentWord.length()];
         answer = WordService.toArray(currentWord);
