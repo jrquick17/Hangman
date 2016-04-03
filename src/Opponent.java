@@ -41,4 +41,12 @@ public class Opponent {
     public void setWords(ArrayList<String> words) {
         this.wordService.setWords(words);
     }
+
+    public void giveWordLength(int wordLength) {
+        wordService.trimByLength(wordLength);
+    }
+
+    public void giveCurrentWord(String[] currentWord) {
+        wordService.trimByCurrentWord(currentWord);
+    }
 }

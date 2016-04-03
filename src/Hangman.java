@@ -3,8 +3,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Hangman {
-    String answered, guessed[] = new String[26], letter,
-    posLetters[] = "a b c d e f g h i j k l m n o p q r s t u v w x y z".split(" ");
+    String answered, guessed[] = new String[26], posLetters[] = "a b c d e f g h i j k l m n o p q r s t u v w x y z".split(" ");
     boolean isComplete = false, multLetter, struckOut = false;
     int placement, strikes;
     double perLetters[] = new double[26];
@@ -60,12 +59,9 @@ public class Hangman {
             return null;
     }
 
-    public ArrayList<String> removeByLength(int length)
-    {
-        for (int i = 0; i < opponent.getWords().size(); i++)
-        {
-            if (opponent.getWords().get(i).length() > length || opponent.getWords().get(i).length() < length)
-            {
+    public ArrayList<String> removeByLength(int length) {
+        for (int i = 0; i < opponent.getWords().size(); i++) {
+            if (opponent.getWords().get(i).length() > length || opponent.getWords().get(i).length() < length) {
                 opponent.getWords().remove(i);
                 i--;
             }
@@ -115,19 +111,19 @@ public class Hangman {
         }
     }
 
-    public void help() {
-        System.out.println("How long is the word? ");
-        currentWordArray = new String[scan.nextInt()];
+    private void help() {
+        System.out.println("What is your word?");
+        answer = WordService.toArray(scan.next());
+        currentWordArray = new String[answer.length];
 
-        opponent.setWords(removeByLength(currentWordArray.length));
+        opponent.giveWordLength(answer.length);
 
         System.out.println("Enter the known letter: ");
-        letter = scan.next();
-        System.out.println("Enter the placement: ");
-        placement = scan.nextInt();
-        currentWordArray[placement] = letter;
+        String letter = scan.next();
+        this.fillIn(letter);
         addToGuessed(letter);
 
+        opponent.giveCurrentWord(currentWordArray);
         opponent.setWords(removeByCorrectLetter(letter, placement));
 
         while (!isComplete) {
@@ -137,14 +133,11 @@ public class Hangman {
 
             System.out.println("Did your guess work? ");
             answered = scan.next();
-            if (answered.equalsIgnoreCase("No"))
-            {
+            if (answered.equalsIgnoreCase("No")) {
                 System.out.println("What letter did you guess? ");
                 letter = scan.next();
                 opponent.setWords(removeByWrongLetter(letter));
-            }
-            else if (answered.equalsIgnoreCase("Yes"))
-            {
+            } else if (answered.equalsIgnoreCase("Yes")) {
                 System.out.println("Enter the known letter: ");
                 letter = scan.next();
                 System.out.println("Enter the placement: ");
@@ -158,7 +151,7 @@ public class Hangman {
                 }
             }
 
-            isComplete = checkIfComplete();
+            isComplete = isComplete();
         }
 
         System.out.println("Thank me later.");
@@ -170,7 +163,7 @@ public class Hangman {
         opponent.setWords(removeByLength(currentWordArray.length));
 
         System.out.println("And what letter are you giving me? ");
-        letter = scan.next();
+        String letter = scan.next();
         if (!letter.equalsIgnoreCase("None")) {
             System.out.println("Where is the letter located? ");
             placement = scan.nextInt();
@@ -179,7 +172,7 @@ public class Hangman {
             currentWordArray[placement] = letter;
         }
 
-        while (!isComplete && !struckOut) {
+        while (!this.isComplete() && !this.isStruckOut()) {
             System.out.println(WordService.toString(currentWordArray));
 
             letter = findNextGuess(false);
@@ -195,7 +188,7 @@ public class Hangman {
                     opponent.setWords(removeByCorrectLetter(letter, placement));
                     currentWordArray[placement] = letter;
 
-                    if (!checkIfComplete()) {
+                    if (!isComplete()) {
                         System.out.println("Is there multiple places for that letter? ");
                         answered = scan.next();
                         if (answered.equalsIgnoreCase("no"))
@@ -211,7 +204,7 @@ public class Hangman {
                 System.out.println("Screwing up, eh?");
             }
 
-            isComplete = checkIfComplete();
+            isComplete = isComplete();
         }
 
         if (isComplete)
@@ -220,17 +213,7 @@ public class Hangman {
             System.out.println("I'm not sure how, but we both know you're a cheating bastard!");
     }
 
-    public boolean checkIfComplete() {
-        for (int i = 0; i < currentWordArray.length; i++) {
-            if (currentWordArray[i] == null) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public boolean addStrike() {
+    private boolean addStrike() {
         strikes++;
 
         System.out.println("Strike " + strikes + " of 6!");
@@ -259,7 +242,7 @@ public class Hangman {
         return strikes == 6;
     }
 
-    public boolean answerContains(String guess) {
+    private boolean answerContains(String guess) {
         for (String letter : answer) {
             if (guess.equals(letter)) {
                 return true;
@@ -269,7 +252,7 @@ public class Hangman {
         return false;
     }
 
-    public void fillIn(String letter) {
+    private void fillIn(String letter) {
         for (int i = 0; i < answer.length; i++) {
             if (answer[i].equals(letter)) {
                 currentWordArray[i] = answer[i];
@@ -277,7 +260,7 @@ public class Hangman {
         }
     }
 
-    public boolean guess(String letter) {
+    private boolean guess(String letter) {
         if (!this.alreadyGuessed(letter)) {
             this.addToGuessed(letter);
 
@@ -294,11 +277,7 @@ public class Hangman {
         return false;
     }
 
-    public boolean isStruckOut() {
-        return strikes == 6;
-    }
-
-    public boolean isComplete() {
+    private boolean isComplete() {
         for (String letter : currentWordArray) {
             if (letter == null) {
                 return false;
@@ -308,17 +287,23 @@ public class Hangman {
         return true;
     }
 
-    public boolean keepPlaying() {
+    private boolean isStruckOut() {
+        return strikes == 6;
+    }
+
+    private boolean keepPlaying() {
         return !isStruckOut() && !this.isComplete();
     }
 
-    public void play() {
+    private void play() {
         String currentWord = opponent.selectWord();
         currentWordArray = new String[currentWord.length()];
         answer = WordService.toArray(currentWord);
 
         System.out.println("Bet you can't guess my word, it's " + currentWordArray.length + " characters long.\nI'll even give you a letter.");
-        this.fillIn(opponent.getFreebie(currentWord));
+        String freebie = opponent.getFreebie(currentWord);
+        this.fillIn(freebie);
+        this.addToGuessed(freebie);
 
         while (this.keepPlaying()) {
             System.out.println(WordService.toString(currentWordArray));
