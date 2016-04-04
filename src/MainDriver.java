@@ -18,7 +18,7 @@ public class MainDriver {
                 hangman.play();
                 break;
             case "create":
-//                hangman.create();
+                hangman.create();
                 break;
             default:
                 System.out.println("You messed up dumbass!");

@@ -92,6 +92,14 @@ public class WordService implements Iterable<String> {
         }
     }
 
+    public void trimByNotLetter(String notLetter) {
+        for (String word : this) {
+            if (word.contains(notLetter)) {
+                this.getWords().remove(word);
+            }
+        }
+    }
+
     public void trimByCurrentWord(String[] currentWord) {
         for (int i = 0; i < this.getWords().size(); i++) {
             String possibleWord = this.getWord(i);

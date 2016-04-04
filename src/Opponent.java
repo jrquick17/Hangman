@@ -11,36 +11,56 @@ public class Opponent {
         return wordService.getLetter(word);
     }
 
-    public String guessLetter(String board) {
-        String letters, words[] = new String[58108];
-        double strength[] = new double[words.length];
-
-        for (String word : wordService) {
-            for (int i = 0; i < word.length(); i++) {
-                String letter = word.substring(i, i+1);
+    public double[] getLetterPercents() {
+        double letterPercents[] = new double[26];
+        for (int let = 0, num = 0; let < 26; let++, num = 0) {
+            for (int i = 0; i < this.getWords().size(); i++) {
+                if (this.getWords().get(i).contains(StatService.getLettersPossible()[let]))
+                    num++;
             }
+
+            letterPercents[let] = ((double)num/this.getWords().size()*100);
         }
 
-        return "";
+        return letterPercents;
     }
 
     public ArrayList<String> getWords() {
         return wordService.getWords();
     }
 
-    public String selectWord() {
-        return wordService.getWord();
+    public void giveCurrentWord(String[] currentWord) {
+        wordService.trimByCurrentWord(currentWord);
     }
 
-    public void setWords(ArrayList<String> words) {
-        this.wordService.setWords(words);
+    public void giveNotLetter(String currentWord) {
+        wordService.trimByNotLetter(currentWord);
     }
 
     public void giveWordLength(int wordLength) {
         wordService.trimByLength(wordLength);
     }
 
-    public void giveCurrentWord(String[] currentWord) {
-        wordService.trimByCurrentWord(currentWord);
+    public String guessLetter() {
+        String[] guessedLetters = StatService.getLettersGuessed();
+        double[] letterPercent = this.getLetterPercents();
+
+        String bestBet = "";
+        for (double i = 0, high = Double.MIN_VALUE; i < letterPercent.length; i++) {
+            if (guessedLetters[(int) i] == null) {
+                if (letterPercent[(int) i] > high) {
+                    bestBet = StatService.getLettersPossible()[(int) i];
+                    high = letterPercent[(int) i];
+                }
+            }
+        }
+
+        System.out.println("How about '" + bestBet + "'?");
+
+        return bestBet;
+    }
+
+    public String selectWord() {
+        return wordService.getWord();
     }
 }
