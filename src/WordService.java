@@ -19,6 +19,10 @@ public class WordService implements Iterable<String> {
         return word.substring(random, random+1);
     }
 
+    public String getLetter(String word, int letter) {
+        return word.substring(letter, letter + 1);
+    }
+
     public String getWord() {
         return words.get(randomGenerator.nextInt(this.size()));
     }
@@ -38,7 +42,7 @@ public class WordService implements Iterable<String> {
     public ArrayList<String> loadWords() {
         ArrayList<String> incomingWords = new ArrayList<>();
         try {
-            FileInputStream fis = new FileInputStream(new File("C:\\Users\\j.quick\\hangman\\resources\\words.txt"));
+            FileInputStream fis = new FileInputStream(new File("resources/words.txt"));
             BufferedInputStream bis = new BufferedInputStream(fis);
             DataInputStream dis = new DataInputStream(bis);
 
@@ -81,7 +85,7 @@ public class WordService implements Iterable<String> {
 
     public void trimByLength(int wordLength) {
         for (int i = 0; i < this.getWords().size(); i++) {
-            if (this.getWords().get(i).length() > wordLength || this.getWords().get(i).length() < wordLength) {
+            if (this.getWords().get(i).length() != wordLength) {
                 this.getWords().remove(i);
                 i--;
             }
@@ -91,11 +95,15 @@ public class WordService implements Iterable<String> {
     public void trimByCurrentWord(String[] currentWord) {
         for (int i = 0; i < this.getWords().size(); i++) {
             String possibleWord = this.getWord(i);
-            for (int j = 0; j < currentWord.length; j++) {
-                if (!possibleWord.substring(j, j+1).equals(currentWord[j])) {
-                    this.getWords().remove(i);
-                    i--;
-                    break;
+            for (int iPossibleLetter = 0; iPossibleLetter < possibleWord.length(); iPossibleLetter++) {
+                if (currentWord[iPossibleLetter] != null) {
+                    String currentLetter = currentWord[iPossibleLetter];
+                    String possibleLetter = getLetter(possibleWord, iPossibleLetter);
+                    if (!currentLetter.equals(possibleLetter)) {
+                        this.getWords().remove(i);
+                        i--;
+                        break;
+                    }
                 }
             }
         }
