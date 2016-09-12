@@ -198,4 +198,25 @@ public class Hangman {
             System.out.println("Didn't really expect much more from you honestly.\nThe word was " + WordService.toString(answer));
         }
     }
+
+    public void start() {
+        System.out.println("What would you like to do?");
+        System.out.println("Type 'help' for help solving.");
+        System.out.println("Type 'play' to try and guess a word.");
+        System.out.println("Type 'create' for me to guess your word.");
+
+        switch (scan.next()) {
+            case "help":
+                hangman.help();
+                break;
+            case "play":
+                hangman.play();
+                break;
+            case "create":
+                hangman.create();
+                break;
+            default:
+                System.out.println("You messed up dumbass!");
+        }
+    }
 }
