@@ -12,7 +12,7 @@
 
 A simple Java program which uses a word dictionary to play Hangman with users; either as the word chooser or the word guesser.  
 
-* Visit the [demo](https://hangman.jrquick.com) to see it action!
+* Visit [my website](https://jrquick.com) for me cool stuff!
 
 ## Run
 
