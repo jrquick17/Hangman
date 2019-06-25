@@ -18,7 +18,7 @@ A simple Java program which uses a word dictionary to play Hangman with users; e
 
 * Clone the repository
 
-    ```git clone git@github.com:jrquick17/hangman.git```
+    ```git clone git@github.com:jrquick17/java-hangman.git```
     
 * Compile project
 
@@ -35,7 +35,7 @@ To contribute, submit any pull request and I will have look.
 
 ## Issues ##
 
-If you find any issues feel free to open a request in [the Issues tab](https://github.com/jrquick17/hangman/issues). If I have the time I will try to solve any issues but cannot make any guarantees. Feel free to contribute yourself.
+If you find any issues feel free to open a request in [the Issues tab](https://github.com/jrquick17/java-hangman/issues). If I have the time I will try to solve any issues but cannot make any guarantees. Feel free to contribute yourself.
 
 ### Thanks ###
 
