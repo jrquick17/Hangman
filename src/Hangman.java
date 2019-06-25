@@ -207,13 +207,13 @@ public class Hangman {
 
         switch (scan.next()) {
             case "help":
-                hangman.help();
+                this.help();
                 break;
             case "play":
-                hangman.play();
+                this.play();
                 break;
             case "create":
-                hangman.create();
+                this.create();
                 break;
             default:
                 System.out.println("You messed up dumbass!");
