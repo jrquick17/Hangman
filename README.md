@@ -19,6 +19,14 @@ A simple Java program which uses a word dictionary to play Hangman with users; e
 * Clone the repository
 
     ```git clone git@github.com:jrquick17/hangman.git```
+    
+* Compile project
+
+    ```javac src/*.java -d target/```
+    
+* Run project
+
+    ```java -cp target/ MainDriver```
 
 
 ## Contributing ##
