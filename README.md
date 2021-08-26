@@ -1,5 +1,7 @@
 # java-hangman
 
+![](example.png)
+
 ## Index ##
 
 * [About](#about)
